@@ -14,7 +14,7 @@ const Productschema = new mongoose.Schema(
     },
 
     img: {
-      type: String,
+      type: [String], // Using square brackets to specify an array of strings
       required: true,
     },
 

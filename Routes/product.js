@@ -57,18 +57,36 @@ router.put("/updateProduct/:id", verifyTokenandAdmin, async (req, res) => {
 
 router.delete("/delete/:id", verifyTokenandAdmin, async (req, res) => {
   try {
-    // Checking wheter the product id object exists or not in the database
+    // Checking whether the product id object exists or not in the database
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json("Invalid product ID");
     }
 
-    // once the product exists in the database then update the product
+    // Deleting multiple products based on the category
+    // const qcategories = req.query.categories;
+
+    // if (qcategories) {
+    //   const deleteProducts = await Product.deleteMany({
+    //     categories: { $in: [qcategories] },
+    //   });
+
+    //   if (deleteProducts.deletedCount === 0) {
+    //     return res
+    //       .status(404)
+    //       .json("No products found for the specified category");
+    //   }
+
+    //   return res.status(200).json("Deleted successfully");
+    // }
+
+    // Deleting a single product
     const deleteProduct = await Product.findByIdAndDelete(req.params.id);
-    //  if the product not found
+
     if (!deleteProduct) {
-      return res.status(500).json("Failed to delete product");
+      return res.status(404).json("Product not found");
     }
-    return res.json("product deleted successfully");
+
+    return res.json("Product deleted successfully");
   } catch (error) {
     console.log(error);
     return res.status(500).json("Internal server error");
