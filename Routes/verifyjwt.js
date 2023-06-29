@@ -18,6 +18,7 @@ const verifyToken = (req, res, next) => {
         }
         // ! if the token is valid assigning decoded token(user) to req.user coz here decoded data contains the payload information about the user which is the userId and email which is used to verify and check the authorization of the orginal user(owner) i,e req.user containing the info of the user should match the req.params.id => which means its the original user
         req.user = user;
+        const userId = user._id;
         next();
       });
     } else {

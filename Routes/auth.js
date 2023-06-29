@@ -46,25 +46,21 @@ router.post("/register", async (req, res) => {
 // ! LOgin
 router.post("/login", async (req, res) => {
   try {
-    const { email, password, isAdmin } = req.body;
-    await User({
-      email,
-      password,
-      isAdmin,
-    });
+    const { email, password } = req.body;
 
-    // ! checking if the user is registerd i,e only the registered user can login .
-    // checking if the email is already registered in the database
+    // Find the existing user in the database
     const registeredUser = await User.findOne({ email });
+
     if (!registeredUser) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // ! comparing the passwords using bcrypt.compare() method
+    // Compare the passwords using bcrypt.compare() method
     const comparePassword = await bcrypt.compare(
       password,
       registeredUser.password
     );
+
     if (!comparePassword) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -77,13 +73,14 @@ router.post("/login", async (req, res) => {
 
     const token = Jwt.sign(payload, process.env.JWT_KEY);
 
-    // destructuring password and the rest ot the info of the user and sending response as info except the password.
-    const { password: userPassword, ...others } = registeredUser._doc;
+    // Destructure the user information and include the isAdmin field
+    const { _id, password: userPassword, ...userInfo } = registeredUser._doc;
 
-    // sending response except password
-    return res.send({ token, others });
+    // Send the response including the token and user information
+    return res.send({ token, ...userInfo });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 

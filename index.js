@@ -8,6 +8,7 @@ const productRoute = require("./Routes/product");
 const cartRoute = require("./Routes/cart");
 const authRoute = require("./Routes/auth");
 const orderRoute = require("./Routes/order");
+const stripeRoute = require("./Routes/stripe");
 const cors = require("cors");
 
 dotenv.config();
@@ -44,6 +45,9 @@ app.use("/api/cart", cartRoute);
 
 // router of the order
 app.use("/api/orders", orderRoute);
+
+//router of the payments(stripe)
+app.use("/api/payments", stripeRoute);
 
 app.listen(port, () => {
   console.log(`server started running on port  http://localhost:${port}`);
